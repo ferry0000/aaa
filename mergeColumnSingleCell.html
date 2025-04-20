@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>tbody のセルを対象にしたサンプル</title>
+  <style>
+    table, th, td {
+      border: 1px solid #000;
+      border-collapse: collapse;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- テーブルは thead と tbody に分かれています -->
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>項目A</th>
+        <th>項目B</th>
+        <th>項目C</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>データ A1</td>
+        <td>データ B1</td>
+        <td>データ C1</td>
+      </tr>
+      <tr>
+        <td>データ A2</td>
+        <td>データ B2</td>
+        <td>データ C2</td>
+      </tr>
+      <tr>
+        <td>データ A3</td>
+        <td>データ B3</td>
+        <td>データ C3</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    /**
+     * 指定したテーブルの tbody 内、対象列の全セルを、
+     * 先頭セルに結合（rowspan 設定）し、2行目以降は非表示にする関数
+     * @param {string} tableId - テーブルの id
+     * @param {number} colIndex - 結合対象の列番号（0オリジン）
+     */
+    function mergeTbodyColumnHidden(tableId, colIndex) {
+      // テーブルの取得
+      var table = document.getElementById(tableId);
+      if (!table) {
+        console.error("指定されたIDのテーブルが見つかりません: " + tableId);
+        return;
+      }
+      
+      // tbody 要素の取得
+      var tbody = table.getElementsByTagName("tbody")[0];
+      if (!tbody) {
+        console.error("tbody が見つかりません。");
+        return;
+      }
+      
+      // tbody 内の全行を取得
+      var rows = tbody.rows;
+      if (rows.length === 0) return;
+      
+      // 最初の行の対象セルを取得
+      var firstCell = rows[0].cells[colIndex];
+      if (!firstCell) {
+        console.error("指定された列番号にセルが存在しません: " + colIndex);
+        return;
+      }
+      
+      // 先頭セルに tbody 内の行数分の rowspan 属性を設定
+      firstCell.rowSpan = rows.length;
+      
+      // 2行目以降の各行について、対象セルを非表示にする
+      for (var i = 1; i < rows.length; i++) {
+        if (rows[i].cells.length > colIndex) {
+          rows[i].cells[colIndex].style.display = "none";
+        }
+      }
+    }
+    
+    // ページ読み込み後に関数を実行
+    window.onload = function() {
+      // 例として、tbody 内の 2 番目の列（インデックス 1）のセルを結合
+      mergeTbodyColumnHidden("myTable", 1);
+    };
+  </script>
+</body>
+</html>
