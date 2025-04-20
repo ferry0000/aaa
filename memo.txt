@@ -2,3 +2,21 @@
 style.display = "none" を設定すると、該当セルは完全に表示されなくなり、レイアウト上もセルが存在しないのと同等の効果となります。場合によっては、セルの領域を確保しておきたい場合は visibility = "hidden" も検討してください（こちらはセルは隠れますが、領域は保持されます）。
 
 https://qiita.com/rico/items/0f645e84028d4fe00be6
+
+
+上記のcell.cellIndexは、'target'クラスだけの列インデックスですか？
+
+ChatGPT:
+いいえ、cell.cellIndex はその行における すべての <td>／<th> 要素を 0 起点で数えた「本来の列位置」です。
+つまり、'target' クラスだけを数えたインデックスではなく、テーブル全体の列数の中で何番目か、という値になります。
+
+もし「target クラスのセルだけを並べた中で何番目か」を取りたい場合は、例えばこんな方法があります。
+
+// その行の target セルを配列にして
+const targets = Array.from(row.querySelectorAll('td.target'));
+
+// 現在の cell が配列の何番目かを取得
+const idxInTargets = targets.indexOf(cell);
+
+cell.cellIndex …テーブル全体のカラム位置
+idxInTargets …target セルのみを集めた配列内の位置（0起点）

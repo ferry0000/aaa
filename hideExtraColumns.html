@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>余分な列を非表示</title>
+  <style>
+      table, th, td {
+      border: 1px solid #333;
+      border-collapse: collapse;
+      padding: 8px;
+      text-align: center;
+    }
+    /* display:none は JavaScript 側で直接付与するので、CSS は特に不要です */
+  </style>
+</head>
+<body>
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>商品名</th>
+        <th>価格</th>
+        <th>在庫</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="target">リンゴ</td>
+        <td class="target">100円</td>
+        <td class="target">50</td>
+        <td class="target">余分なセル1</td>
+        <td>備考</td>
+      </tr>
+      <tr>
+        <td class="target">バナナ</td>
+        <td class="target">80円</td>
+        <td class="target">30</td>
+        <td class="target">余分なセル2</td>
+        <td>備考</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    (function() {
+      // ——— 設定部分 ———
+      const table       = document.getElementById('myTable');  // 対象テーブル
+      const targetClass = 'target';                            // 対象セルのクラス名
+      // ——————————————
+
+      // thead 内の <th> 要素数を数えて列数を取得（0 始まりのインデックスと組み合わせるため）
+      const headerCount = table.querySelectorAll('thead th').length;
+
+      // tbody の各行をループ
+      table.querySelectorAll('tbody tr').forEach(row => {
+        // その行の中で targetClass を持つ <td> だけを取得
+        row.querySelectorAll('td.' + targetClass).forEach(cell => {
+          // cell.cellIndex で、そのセルが何番目の列かを 0 始まりで取得
+          if (cell.cellIndex >= headerCount) {
+            // thead の列数を超えるセルは非表示
+            cell.style.display = 'none';
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

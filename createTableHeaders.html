@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>動的に<th>を追加するサンプル</title>
+  <style>
+    table, th, td {
+      border: 1px solid #333;
+      border-collapse: collapse;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <table id="myTable">
+    <thead>
+      <!-- 動的に<th>が追加されます -->
+    </thead>
+    <tbody>
+      <tr>
+        <td>データ1</td>
+        <td>データ2</td>
+      </tr>
+    </tbody>
+  </table>
+  
+    <table id="myTable2">
+    <thead>
+      <!-- 動的に<th>が追加されます -->
+    </thead>
+    <tbody>
+      <tr>
+        <td>データ1</td>
+        <td>データ2</td>
+        <td>データ1</td>
+        <td style="display: none"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    // オブジェクト配列データ
+    const headerData = [
+      { name: "名前" },
+      { name: "年齢" },
+      { name: "住所" }
+    ];
+
+    // <thead>の<th>要素を追加する関数
+    function createTableHeaders(data, tableName) {
+      const thead = document.querySelector(`#${tableName} thead`);
+      const tr = document.createElement("tr");
+
+      // 配列の各オブジェクトから<th>を生成して追加
+      data.forEach(item => {
+        const th = document.createElement("th");
+        th.textContent = item.name; // 'name'フィールドの値を設定
+        tr.appendChild(th);
+      });
+
+      thead.appendChild(tr);
+    }
+
+    // テーブルのヘッダーを作成
+    createTableHeaders(headerData, 'myTable');
+    createTableHeaders(headerData, 'myTable2');
+  </script>
+
+</body>
+</html>
