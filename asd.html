@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>tbody内のデータに対してセル結合のサンプル（整理版）</title>
+  <style>
+    table, th, td {
+      border: 1px solid #333;
+      border-collapse: collapse;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>値</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>A</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td>1</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td>2</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td>2</td>
+        <td>1</td>
+        <td>1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    /**
+     * 指定したtbody内の指定列のセルをマージします。
+     * colIndexが0の場合は、前セルとテキストが一致すればマージします。
+     * colIndexが0以外の場合、前セルと一致し、かつ前の列が既にマージ済み（非表示）ならマージします。
+     *
+     * @param {string} tableId - テーブルのID
+     * @param {number} colIndex - 結合対象の列インデックス（0始まり）
+     */
+    function mergeColumnInTbody(tableId, colIndex) {
+      const table = document.getElementById(tableId);
+      if (!table || !table.tBodies[0]) return;
+      
+      const tbody = table.tBodies[0];
+      let prevCell = null, spanCount = 1;
+
+      for (let i = 0; i < tbody.rows.length; i++) {
+        const row = tbody.rows[i];
+        const cell = row.cells[colIndex];
+        if (!cell) continue;
+
+        // colIndexが0の場合は単純に比較、
+        // それ以外は、前の列がマージ済み（非表示）かどうかも確認する
+        if (prevCell &&
+            cell.textContent === prevCell.textContent &&
+            (colIndex === 0 || row.cells[colIndex - 1].style.display === 'none')) {
+          spanCount++;
+          prevCell.rowSpan = spanCount;
+          cell.style.display = 'none';
+        } else {
+          prevCell = cell;
+          spanCount = 1;
+        }
+      }
+    }
+
+    // ページ読み込み時に各列のマージを実行
+    window.onload = function() {
+      mergeColumnInTbody('myTable', 0); // 1列目
+      mergeColumnInTbody('myTable', 1); // 2列目
+      mergeColumnInTbody('myTable', 2); // 3列目
+    }
+  </script>
+</body>
+</html>
