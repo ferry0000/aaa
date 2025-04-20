@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>テーブルセルをグレーアウト</title>
+  <style>
+    /* グレーアウト用のスタイル */
+    .gray-out {
+      background-color: #f0f0f0; /* 背景グレー */
+      color: #888;              /* 文字色も薄く */
+    }
+  </style>
+</head>
+<body>
+  <table id="myTable" border="1">
+    <tr>
+      <td class="target">A1</td>
+      <td>B1</td>
+    </tr>
+    <tr>
+      <td class="target">A2</td>
+      <td>B2</td>
+    </tr>
+    <tr>
+      <td>C1</td>
+      <td>C2</td>
+    </tr>
+  </table>
+
+  <script>
+    // １．グレーアウトしたい“特定のクラス名”を指定
+    const targetClass = 'target';
+
+    // ２．テーブル内の対象セルをすべて取得
+    const cells = document.querySelectorAll('#myTable td.' + targetClass);
+
+    // ３．forEachでループし、CSSクラスを付与
+    cells.forEach(cell => {
+      cell.classList.add('gray-out');
+    });
+  </script>
+</body>
+</html>
