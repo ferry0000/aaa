@@ -1,0 +1,288 @@
+// サンプルデータ
+const opData = {
+  evaluationItem1: "可用性", evaluation1: "◎",
+  evaluationItem2: "判別性", evaluation2: "○",
+  evaluationItem3: "可能性", evaluation3: "○",
+  evaluationItem4: "完全性", evaluation4: "△"
+};
+const evaluationItemData = [
+  { evaluationItem: "完全性", weight: "3" },
+  { evaluationItem: "可能性", weight: "1" },
+  { evaluationItem: "可用性", weight: "5" },
+  { evaluationItem: "判別性", weight: "3" }
+];
+const scoreMap = { "△": 1, "○": 2, "◎": 3 };
+
+// 1) opData から「項目名 → 評価記号」のマップを作る
+const symbolMap = {};
+Object
+  .keys(opData)
+  .filter(key => key.startsWith("evaluationItem"))
+  .forEach(itemKey => {
+    const idx      = itemKey.replace("evaluationItem", "");  // "1", "2", ...
+    const itemName = opData[itemKey];                        // 例: "可用性"
+    const symbol   = opData[`evaluation${idx}`];              // 例: "◎"
+    symbolMap[itemName] = symbol;
+  });
+
+// 2) 合計スコアと、すべて◎の場合のスコアを計算
+let actualScore  = 0;
+let perfectScore = 0;
+const perfectValue = scoreMap["◎"];  // 「◎」の評価点 (3)
+
+for (const { evaluationItem, weight } of evaluationItemData) {
+  const w      = Number(weight);                  // 重みを数値化
+  const sAct   = scoreMap[symbolMap[evaluationItem]] || 0; // 実際の評価点
+  actualScore  += w * sAct;                       // 実際のスコアを累積
+  perfectScore += w * perfectValue;               // すべて◎ならのスコアを累積
+}
+
+console.log(`実際の合計スコア: ${actualScore}`);   // ex: 26
+console.log(`全て◎の場合の合計スコア: ${perfectScore}`); // ex: 36
+
+// 3) 区分計算（perfectScore を 4 等分し、小数点切り捨て）
+const segment = Math.floor(perfectScore / 4);
+// 4つのシンボルを順に配列に用意
+const symbols = ['×', '△', '○', '◎'];
+
+// actualScore に応じてどの区分か判定
+let categorySymbol;
+if      (actualScore <= segment)         categorySymbol = symbols[0];
+else if (actualScore <= segment * 2)     categorySymbol = symbols[1];
+else if (actualScore <= segment * 3)     categorySymbol = symbols[2];
+else                                     categorySymbol = symbols[3];
+
+console.log(`区分シンボル: ${categorySymbol}`); // ex: "○"
+
+
+
+
+// サンプルデータ
+const opData = {
+  evaluationItem1: "可用性", evaluation1: "◎",
+  evaluationItem2: "判別性", evaluation2: "○",
+  evaluationItem3: "可能性", evaluation3: "○",
+  evaluationItem4: "完全性", evaluation4: "△"
+};
+const evaluationItemData = [
+  { evaluationItem: "完全性", weight: "3" },
+  { evaluationItem: "可能性", weight: "1" },
+  { evaluationItem: "可用性", weight: "5" },
+  { evaluationItem: "判別性", weight: "3" }
+];
+const scoreMap = { "△": 1, "○": 2, "◎": 3 };
+
+// 1) opData から「項目名 → 評価記号」のマップを作る
+const symbolMap = {};
+Object
+  .keys(opData)
+  .filter(key => key.startsWith("evaluationItem"))
+  .forEach(itemKey => {
+    const idx      = itemKey.replace("evaluationItem", "");  // "1", "2", ...
+    const itemName = opData[itemKey];                        // 例: "可用性"
+    const symbol   = opData[`evaluation${idx}`];              // 例: "◎"
+    symbolMap[itemName] = symbol;
+  });
+
+// 2) 合計スコアと、すべて◎の場合のスコアを計算
+let actualScore  = 0;
+let perfectScore = 0;
+const perfectValue = scoreMap["◎"];  // 「◎」の評価点 (3)
+
+for (const { evaluationItem, weight } of evaluationItemData) {
+  const w      = Number(weight);                       // 重みを数値化
+  const symbol = symbolMap[evaluationItem] || "";      // 実際の評価記号
+  const s      = scoreMap[symbol] || 0;                // 実際の評価点
+  actualScore  += w * s;                               // 実際のスコアを累積
+  perfectScore += w * perfectValue;                    // すべて◎ならのスコアを累積
+}
+
+console.log(`実際の合計スコア: ${actualScore}`);
+console.log(`全て◎の場合の合計スコア: ${perfectScore}`);
+
+
+// サンプルデータ
+const opData = {
+  evaluationItem1: "可用性", evaluation1: "◎",
+  evaluationItem2: "判別性", evaluation2: "○",
+  evaluationItem3: "可能性", evaluation3: "○",
+  evaluationItem4: "完全性", evaluation4: "△"
+};
+const evaluationItemData = [
+  { evaluationItem: "完全性", weight: "3" },
+  { evaluationItem: "可能性", weight: "1" },
+  { evaluationItem: "可用性", weight: "5" },
+  { evaluationItem: "判別性", weight: "3" }
+];
+const scoreMap = { "△": 1, "○": 2, "◎": 3 };
+
+// 1) opData から「項目名 → 評価記号」のマップを作る
+const symbolMap = {};
+Object
+  .keys(opData)
+  .filter(key => key.startsWith("evaluationItem"))
+  .forEach(itemKey => {
+    const idx      = itemKey.replace("evaluationItem", "");  // "1", "2", ...
+    const itemName = opData[itemKey];                        // 例: "可用性"
+    const symbol   = opData[`evaluation${idx}`];              // 例: "◎"
+    symbolMap[itemName] = symbol;
+  });
+
+// 2) evaluationItemData を順に回して合計スコアを計算
+let totalScore = 0;
+for (const { evaluationItem, weight } of evaluationItemData) {
+  const symbol = symbolMap[evaluationItem] || "";    // 記号を取り出し
+  const score  = scoreMap[symbol] || 0;              // 数値化（未定義時は0）
+  totalScore  += Number(weight) * score;             // 重み × 評価点 を加算
+}
+
+console.log(`合計スコア: ${totalScore}`);  // → 正しい合計が出力される
+
+
+
+const opData = {
+  evaluationItem1: "可用性", evaluation1: "◎",
+  evaluationItem2: "判別性", evaluation2: "○",
+  evaluationItem3: "可能性", evaluation3: "○",
+  evaluationItem4: "完全性", evaluation4: "△"
+  // ... さらに増えてもOK
+};
+const evaluationItemData = [
+  { evaluationItem: "完全性", weight: "3" },
+  { evaluationItem: "可能性", weight: "1" },
+  { evaluationItem: "可用性", weight: "5" },
+  { evaluationItem: "判別性", weight: "3" }
+  // ... さらに増えてもOK
+];
+const scoreMap = { "△": 1, "○": 2, "◎": 3 };
+
+// 1. opData から「項目名 → 記号」マップを動的に生成
+const symbolMap = Object.keys(opData).reduce((map, key) => {
+  const match = key.match(/^evaluationItem(\d+)$/);
+  if (match) {
+    const idx = match[1];                  // キャプチャした番号（"1","2",...）
+    const itemName = opData[key];          // 例："可用性"
+    const symbolKey = `evaluation${idx}`;  // 対応する評価記号のキー
+    map[itemName] = opData[symbolKey];     // map["可用性"] = "◎"
+  }
+  return map;
+}, {});
+
+// 2. evaluationItemData を走査して合計スコアを計算
+const totalScore = evaluationItemData.reduce((sum, { evaluationItem, weight }) => {
+  const symbol = symbolMap[evaluationItem] || "";   // 記号を取得（なければ空文字）
+  const s = scoreMap[symbol] || 0;                  // 記号 → 数値（なければ0）
+  return sum + Number(weight) * s;                  // 重み × 数値 を累積
+}, 0);
+
+console.log(`合計スコア: ${totalScore}`);
+
+
+
+
+// --- サンプルデータ（そのまま使えます） ---
+const opData = {
+  evaluationItem1: "可用性", evaluation1: "◎",
+  evaluationItem2: "判別性", evaluation2: "○",
+  evaluationItem3: "可能性", evaluation3: "○",
+  evaluationItem4: "完全性", evaluation4: "△"
+};
+const evaluationItemData = [
+  { evaluationItem: "完全性", weight: "3" },
+  { evaluationItem: "可能性", weight: "1" },
+  { evaluationItem: "可用性", weight: "5" },
+  { evaluationItem: "判別性", weight: "3" }
+];
+const scoreMap = { "×": 0, "△": 1, "○": 2, "◎": 3 };  // × を 0 に含めておくと汎用的
+
+// --- 1) opData から「項目名 → 記号」のマップを作成 ---
+function buildSymbolMap(opData) {
+  const map = {};
+  Object
+    .entries(opData)
+    .forEach(([key, value]) => {
+      const match = key.match(/^evaluationItem(\d+)$/);
+      if (match) {
+        const idx      = match[1];
+        const itemName = value;
+        const symbol   = opData[`evaluation${idx}`];
+        map[itemName]  = symbol;
+      }
+    });
+  return map;
+}
+
+// --- 2) 実際スコアと満点スコアを計算 ---
+function calculateScores(itemData, symbolMap, scoreMap) {
+  const perfectValue = scoreMap["◎"];
+  return itemData.reduce((acc, { evaluationItem, weight }) => {
+    const w     = Number(weight);
+    const sym   = symbolMap[evaluationItem] || "×";
+    const sAct  = scoreMap[sym] || 0;
+    acc.actual  += w * sAct;
+    acc.perfect += w * perfectValue;
+    return acc;
+  }, { actual: 0, perfect: 0 });
+}
+
+// --- 3) スコアを4区分してシンボル化 ---
+function categorizeScore(actual, perfect) {
+  const segment = Math.floor(perfect / 4);
+  if (actual <= segment)          return "×";
+  if (actual <= segment * 2)      return "△";
+  if (actual <= segment * 3)      return "○";
+  return "◎";
+}
+
+// --- 実行例 ---
+const symbolMap      = buildSymbolMap(opData);
+const { actual, perfect } = calculateScores(evaluationItemData, symbolMap, scoreMap);
+const categorySymbol = categorizeScore(actual, perfect);
+
+// --- 結果出力 ---
+console.log(`実際の合計スコア: ${actual}`);
+console.log(`全て◎の場合の合計スコア: ${perfect}`);
+console.log(`区分シンボル: ${categorySymbol}`);
+
+
+
+// 1) buildSymbolMap: opData から「項目名 → 評価記号」のマップを作成
+function buildSymbolMap(opData) {
+  const symbolMap = {};
+
+  // "evaluationItemN" というキーを見つけて処理
+  Object.keys(opData)
+    .filter(key => key.startsWith("evaluationItem"))
+    .forEach(itemKey => {
+      // "evaluationItem2" → "2"
+      const index    = itemKey.replace("evaluationItem", "");
+      // opData["evaluationItem2"] → "可能性"
+      const itemName = opData[itemKey];
+      // 対応する評価記号のキー "evaluation2"
+      const symbolKey = `evaluation${index}`;
+      // opData["evaluation2"] → "○"
+      const symbol   = opData[symbolKey];
+      symbolMap[itemName] = symbol;
+    });
+
+  return symbolMap;
+}
+
+// 2) calculateScores: 実際のスコア(actual) と 満点スコア(perfect) を計算
+function calculateScores(evaluationItemData, symbolMap, scoreMap) {
+  let actualScore  = 0;
+  let perfectScore = 0;
+  // 「◎」の数値を満点として使う
+  const perfectValue = scoreMap["◎"] || 0;
+
+  evaluationItemData.forEach(({ evaluationItem, weight }) => {
+    const w       = Number(weight);                                 // 重みを数値に
+    const symbol  = symbolMap[evaluationItem] || "×";               // 実際の記号（未定義時は"×"）
+    const score   = scoreMap[symbol] || 0;                          // 記号→数値（未定義時は0）
+
+    actualScore  += w * score;              // 実際のスコアを加算
+    perfectScore += w * perfectValue;       // 満点スコアを加算
+  });
+
+  return { actualScore, perfectScore };
+}
