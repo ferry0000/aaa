@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>動的テーブル＋5文字改行</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: top;
+    }
+  </style>
+</head>
+<body>
+  <!-- テーブルを描画するコンテナ -->
+  <div id="table-container"></div>
+
+  <script>
+    // サンプルのオブジェクト配列
+    const data = [
+      { id: 1, name: 'abcdefghijklmnop', description: 'これはとても長い説明文です。動的に改行してみましょう！' },
+      { id: 2, name: '1234567890',      description: '短めの文' },
+      { id: 3, name: 'あいうえおかきくけこさしすせそたちつてと', description: '日本語もOKです。' }
+    ];
+
+    /**
+     * 文字列を n 文字ごとに <br> を挿入して返す
+     * @param {string} text — 処理対象の文字列
+     * @param {number} n    — 改行を挿入する間隔
+     * @returns {string}     — <br> が入った HTML 文字列
+     */
+    function insertLineBreaks(text, n) {
+      // 1) 正規表現で n 文字ずつにマッチさせる
+      const chunks = text.match(new RegExp(`.{1,${n}}`, 'g')) || [];
+      // 2) 配列を '<br>' でつなげて返す
+      return chunks.join('<br>');
+    }
+
+    /**
+     * オブジェクト配列を受け取り、テーブルを生成して画面に表示する
+     * @param {Object[]} dataArray — オブジェクトの配列
+     */
+    function renderTable(dataArray) {
+      if (!dataArray.length) return;
+
+      // 1) <table> 要素を作成
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // 2) ヘッダー行を生成（オブジェクトのキー一覧を利用）
+      const headerRow = document.createElement('tr');
+      Object.keys(dataArray[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      // 3) ボディ部を生成
+      dataArray.forEach(item => {
+        const tr = document.createElement('tr');
+        Object.values(item).forEach(value => {
+          const td = document.createElement('td');
+          // 値が文字列なら 5 文字ごとに改行を挿入
+          if (typeof value === 'string') {
+            const aaa = insertLineBreaks(value, 5);
+            console.log(aaa);
+            td.innerHTML = aaa;
+          } else {
+            td.textContent = value;
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      // 4) <table> に thead/tbody を追加して画面に配置
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      document.getElementById('table-container').appendChild(table);
+    }
+
+    // ページ読み込み時にテーブルを描画
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTable(data);
+    });
+  </script>
+</body>
+</html>

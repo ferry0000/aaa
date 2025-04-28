@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>見出し列＋asset-priorityクラス対応</title>
+  <style>
+    .greyed-out {
+      background-color: gray;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- 切り替えボタン -->
+  <button id="toggleBtn">空リストボックス非表示</button>
+
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>行名</th>
+        <th>項目1</th>
+        <th>項目2</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <!-- 見出し列も td に -->
+        <td>行1</td>
+        <!-- select のあるセルには asset-priority クラスを付与 -->
+        <td class="asset-priority">
+          <select>
+            <option value="">--</option>
+            <option value="A">A</option>
+          </select>
+        </td>
+        <td class="asset-priority">
+          <select>
+            <option value="">--</option>
+            <option value="B">B</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>行2</td>
+        <td class="asset-priority">
+          <select>
+            <option value="">--</option>
+            <option value="C">C</option>
+          </select>
+        </td>
+        <td class="asset-priority">
+          <select>
+            <option value="">--</option>
+            <option value="D">D</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    /**
+     * asset-priority クラスのついた <td> を対象に
+     * 空の select を非表示＋セルグレーアウト
+     */
+    function hideEmptySelects(tableId) {
+      const cells = document.querySelectorAll(`#${tableId} tbody td.asset-priority`);
+      cells.forEach(cell => {
+        const sel = cell.querySelector('select');
+        if (sel && sel.value === '') {
+          sel.style.display = 'none';
+          cell.classList.add('greyed-out');
+        }
+      });
+    }
+
+    /**
+     * 非表示／グレーアウトを解除
+     */
+    function showEmptySelects(tableId) {
+      const cells = document.querySelectorAll(`#${tableId} tbody td.asset-priority`);
+      cells.forEach(cell => {
+        const sel = cell.querySelector('select');
+        if (sel && sel.style.display === 'none' && sel.value === '') {
+          sel.style.display = '';
+          cell.classList.remove('greyed-out');
+        }
+      });
+    }
+
+    /**
+     * ボタンで toggle をセットアップ
+     */
+    function setupToggleEmptySelects(buttonId, tableId) {
+      const btn = document.getElementById(buttonId);
+      let isHidden = false;
+      btn.addEventListener('click', () => {
+        if (!isHidden) {
+          hideEmptySelects(tableId);
+          btn.textContent = '元に戻す';
+        } else {
+          showEmptySelects(tableId);
+          btn.textContent = '空リストボックス非表示';
+        }
+        isHidden = !isHidden;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupToggleEmptySelects('toggleBtn', 'myTable');
+    });
+  </script>
+</body>
+</html>

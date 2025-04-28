@@ -1,0 +1,10 @@
+おまけ：Apache Commons Lang を使う（StrTokenizer／WordUtils）
+Apache Commons Lang の WordUtils.wrap を使うと、指定幅で改行できます：
+
+java
+コピーする
+編集する
+import org.apache.commons.lang3.text.WordUtils;
+
+String wrapped = WordUtils.wrap(original, 5, "\n", false);
+ライブラリ導入が可能な場合には、こちらも検討してみてください。
