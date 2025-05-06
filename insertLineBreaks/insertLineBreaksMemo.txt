@@ -1,0 +1,86 @@
+1. StringBuilder を使ったループ処理
+java
+コピーする
+編集する
+/**
+ * 文字列を interval ごとに改行コード '\n' を挿入する汎用メソッド
+ */
+public static String insertNewlines(String input, int interval) {
+    if (input == null || interval <= 0) {
+        throw new IllegalArgumentException("input 非 null かつ interval は 1 以上を指定してください");
+    }
+    StringBuilder sb = new StringBuilder(input.length() + input.length() / interval + 1);
+    for (int i = 0; i < input.length(); i++) {
+        sb.append(input.charAt(i));
+        // (i+1) が interval の倍数かつ末尾でない場合に改行を追加
+        if ((i + 1) % interval == 0 && i + 1 < input.length()) {
+            sb.append('\n');
+        }
+    }
+    return sb.toString();
+}
+
+// 利用例
+public static void main(String[] args) {
+    String original = "abcdefghijklmnopqrstuvwxyz";
+    String formatted = insertNewlines(original, 5);
+    System.out.println(formatted);
+}
+
+
+
+
+2. 正規表現（regex）を使う方法
+短いコードで実現できますが、ややトリッキーな書き方になります。
+
+java
+コピーする
+編集する
+public static String insertNewlinesWithRegex(String input, int interval) {
+    if (input == null || interval <= 0) {
+        throw new IllegalArgumentException("input 非 null かつ interval は 1 以上を指定してください");
+    }
+    // (?<=\G.{interval}) は「直前の全体マッチ位置から interval 文字経過した場所」を意味します
+    String regex = "(?<=\\G.{" + interval + "})";
+    return input.replaceAll(regex, "\n");
+}
+
+// 利用例
+public static void main(String[] args) {
+    String original = "abcdefghijklmnopqrstuvwxyz";
+    String formatted = insertNewlinesWithRegex(original, 5);
+    System.out.println(formatted);
+}
+
+
+
+
+ポイント解説
+StringBuilder＋ループ
+
+明示的に１文字ずつ処理するため挙動が分かりやすい
+
+大きな文字列でも高速（バッファサイズをあらかじめ確保できる）
+
+正規表現
+
+コード量が少なく書きやすい
+
+パターンの理解にややコツが要る
+
+大きな文字列や複雑なパターンではパフォーマンスが落ちる場合あり
+
+
+
+
+
+おまけ：Apache Commons Lang を使う（StrTokenizer／WordUtils）
+Apache Commons Lang の WordUtils.wrap を使うと、指定幅で改行できます：
+
+java
+コピーする
+編集する
+import org.apache.commons.lang3.text.WordUtils;
+
+String wrapped = WordUtils.wrap(original, 5, "\n", false);
+ライブラリ導入が可能な場合には、こちらも検討してみてください。
