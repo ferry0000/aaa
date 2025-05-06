@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>テーブルセル結合＋Textarea自動フィット</title>
+    <style>
+        /* テーブル内の textarea をセルいっぱいに */
+        table td textarea {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            /* padding や border をサイズ内に含める */
+            /* resize: none;           ユーザーによるリサイズを無効化 */
+        }
+
+        /* 見やすさ向上のための簡易スタイル */
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        th,
+        td {
+            border: 1px solid #333;
+            padding: 4px;
+            text-align: center;
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="text-align: center">セル結合＋Textarea 自動フィット例</h2>
+
+    <table id="myTable">
+        <tr>
+            <td><textarea>セル A1</textarea></td>
+            <td><textarea>セル B1</textarea></td>
+            <td><textarea>セル C1</textarea></td>
+        </tr>
+        <tr>
+            <td><textarea>セル A2</textarea></td>
+            <td><textarea>セル B2</textarea></td>
+            <td><textarea>セル C2</textarea></td>
+        </tr>
+        <tr>
+            <td><textarea>セル A3</textarea></td>
+            <td><textarea>セル B3</textarea></td>
+            <td><textarea>セル C3</textarea></td>
+        </tr>
+    </table>
+
+    <script>
+        /**
+         * テーブル内のセルを動的に結合し、余分なセルを非表示にする。
+         * @param {string} tableId - テーブル要素の id
+         * @param {number} startRow - 結合開始行（0 始まり）
+         * @param {number} startCol - 結合開始列（0 始まり）
+         * @param {number} rowSpan   - 結合行数
+         * @param {number} colSpan   - 結合列数
+         */
+        function mergeCells(
+            tableId,
+            startRow,
+            startCol,
+            rowSpan = 1,
+            colSpan = 1
+        ) {
+            const tbl = document.getElementById(tableId);
+            const baseCell = tbl.rows[startRow].cells[startCol];
+            // rowspan/colspan を設定
+            baseCell.rowSpan = rowSpan;
+            baseCell.colSpan = colSpan;
+
+            // 結合範囲内の他セルを非表示に
+            for (let r = startRow; r < startRow + rowSpan; r++) {
+                for (let c = startCol; c < startCol + colSpan; c++) {
+                    if (r === startRow && c === startCol) continue;
+                    const cell = tbl.rows[r].cells[c];
+                    if (cell) cell.style.display = "none";
+                }
+            }
+
+            // ★ここで実際のセルサイズを取得して textarea に反映
+            const textarea = baseCell.querySelector("textarea");
+            if (textarea) {
+                // offsetWidth/Height には padding や border を含む
+                // textarea.style.width = baseCell.offsetWidth + "px";
+                textarea.style.height = baseCell.offsetHeight + "px";
+            }
+        }
+
+        // 実行例：1行目1列目を起点に、2行×3列 を結合
+        document.addEventListener("DOMContentLoaded", () => {
+            mergeCells("myTable", 0, 0, 3, 0);
+        });
+    </script>
+</body>
+
+</html>

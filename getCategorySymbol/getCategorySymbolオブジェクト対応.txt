@@ -1,0 +1,39 @@
+field の中身が { value: "…" } の形になったので、キーから取り出すときに .value を経由するだけでOKです。例えば forEach 版なら：
+
+javascript
+コピーする
+編集する
+function createSymbolMap(opData) {
+  const map   = {};
+  const field = opData.field;
+
+  Object
+    .keys(field)
+    .filter(key => key.startsWith("evaluationItem"))
+    .forEach(itemKey => {
+      const idx      = itemKey.replace("evaluationItem", "");
+      const itemName = field[itemKey].value;             // ← .value を追加
+      const symbol   = field[`evaluation${idx}`].value;  // ← こちらも .value
+      map[itemName]  = symbol;
+    });
+
+  return map;
+}
+あるいは reduce 版で書くなら：
+
+javascript
+コピーする
+編集する
+function createSymbolMap({ field }) {
+  return Object
+    .keys(field)
+    .filter(key => key.startsWith("evaluationItem"))
+    .reduce((map, itemKey) => {
+      const idx = itemKey.replace("evaluationItem", "");
+      const itemName = field[itemKey].value;            
+      const symbol   = field[`evaluation${idx}`].value;  
+      map[itemName] = symbol;
+      return map;
+    }, {});
+}
+これで evaluationItem* とそれに対応する evaluation* の中の value を正しくマッピングできます。

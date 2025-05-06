@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>動的テーブル＋テキストエリア＋セル結合＋全体表示</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      vertical-align: top;
+      /* 親 td の高さに合わせて textarea を拡げる */
+      /* position: relative; */
+    }
+    textarea {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      resize: vertical;
+      /* font-family: inherit; */
+      /* 行数で高さを制御 */
+    }
+  </style>
+</head>
+<body>
+  <div id="table-container"></div>
+
+  <script>
+    const data = [
+      { category: 'A', item: '商品A1', desc: '説明文A1' },
+      { category: 'A', item: '商品A2', desc: '説明文A2' },
+      { category: 'B', item: '商品B1', desc: '説明文B1' },
+      { category: 'C', item: '商品C1', desc: '説明文C1' },
+      { category: 'C', item: '商品C2', desc: '説明文C2' },
+      { category: 'C', item: '商品C3', desc: '説明文C3' }
+    ];
+
+    function renderTableWithTextarea(dataArray) {
+      if (!dataArray.length) return;
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // ヘッダー生成
+      const headerRow = document.createElement('tr');
+      Object.keys(dataArray[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+
+      // ボディ生成
+      dataArray.forEach(item => {
+        const tr = document.createElement('tr');
+        Object.values(item).forEach(value => {
+          const td = document.createElement('td');
+          const ta = document.createElement('textarea');
+          // 初期行数を1に固定
+          ta.rows = 1;
+          ta.value = value != null ? value.toString() : '';
+          td.appendChild(ta);
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+
+      // マージ前に結合処理
+      mergeFirstColumnCells(table);
+
+      document.getElementById('table-container').appendChild(table);
+    }
+
+    function mergeFirstColumnCells(table) {
+      const rows = table.tBodies[0].rows;
+      let prevCell = null;
+      let prevValue = null;
+      let spanCount = 1;
+
+      for (let i = 0; i < rows.length; i++) {
+        const cell = rows[i].cells[0];
+        const text = cell.querySelector('textarea').value;
+
+        if (prevCell && text === prevValue) {
+          spanCount++;
+          // rowspan を更新
+          prevCell.rowSpan = spanCount;
+          // textarea の行数も rowspan に合わせる
+          const ta = prevCell.querySelector('textarea');
+          ta.rows = spanCount;
+          // 重複セルは非表示
+          cell.style.display = 'none';
+        } else {
+          // 新しい値
+          prevCell = cell;
+          prevValue = text;
+          spanCount = 1;
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTableWithTextarea(data);
+    });
+  </script>
+</body>
+</html>

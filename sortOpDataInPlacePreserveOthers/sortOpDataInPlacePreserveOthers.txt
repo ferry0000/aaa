@@ -1,0 +1,44 @@
+解決策：評価用キーだけを削除して再構築
+以下のように、まず「evaluationItem*/evaluation*」キーだけを列挙・削除し、
+そのあとソート済みのペアを詰め直せば、他のキーはそのまま残せます。
+
+javascript
+コピーする
+編集する
+function sortOpDataInPlacePreserveOthers(opData) {
+  const field = opData.field;
+
+  // 1. evaluationItem*/evaluation* のペアを抽出
+  const pairs = Object
+    .keys(field)
+    .filter(key => key.startsWith("evaluationItem"))
+    .map(itemKey => {
+      const idx       = itemKey.replace("evaluationItem", "");
+      const itemValue = field[itemKey].value;
+      const evalValue = field[`evaluation${idx}`].value;
+      return { itemKey, evalKey: `evaluation${idx}`, itemValue, evalValue };
+    });
+
+  // 2. itemValue 昇順ソート
+  pairs.sort((a, b) => a.itemValue.localeCompare(b.itemValue));
+
+  // 3. 古い評価用キーだけを削除（他のキーはそのまま残る）
+  Object.keys(field)
+    .filter(key => key.startsWith("evaluationItem") || key.startsWith("evaluation"))
+    .forEach(key => delete field[key]);
+
+  // 4. ソート後のペアを「連番付きキー」で詰め直す
+  pairs.forEach(({ itemValue, evalValue }, i) => {
+    const n = i + 1;
+    field[`evaluationItem${n}`] = { value: itemValue };
+    field[`evaluation${n}`]     = { value: evalValue };
+  });
+}
+ポイント
+filter(key => key.startsWith(...)) で削除対象キーを限定
+
+他のプロパティ（例：field.timestamp や field.meta）には手を付けないのでそのまま保持
+
+評価用キーのみを並び替え＆再ナンバリングできる
+
+これで、余計なプロパティを安全に残しつつ、evaluationItem*／evaluation* ペアだけをソートできます。
