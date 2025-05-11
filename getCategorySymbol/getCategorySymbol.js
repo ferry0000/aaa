@@ -19,7 +19,10 @@ function createSymbolMap(opData) {
       const idx = itemKey.replace('evaluationItem', '');
       const itemName = opData[itemKey];
       const symbol = opData[`evaluation${idx}`];
-      map[itemName] = symbol;
+      // 評価項目かつ評価が'-'でない場合、追加
+      if (itemName !== SYMBOLS.HYPHEN && symbol !== SYMBOLS.HYPHEN) {
+        map[itemName] = symbol;
+      }
     });
   return map;
 }
@@ -68,14 +71,18 @@ function determineCategory(actualScore, perfectScore) {
 
 // 4) 全体をまとめて「区分シンボル」を返す関数
 function getCategorySymbol(opData, evaluationItemData) {
+
+  // ─── 評価項目重複チェック ───
+  if (checkDupEvaItems(opData)) {
+    return;
+  }
+
   const symbolMap = createSymbolMap(opData);
 
-  // 評価項目、又は評価が'-'の場合、算出対象から削除
-  Object.keys(symbolMap).forEach(key => {
-    if (key === SYMBOLS.HYPHEN || symbolMap[key] === SYMBOLS.HYPHEN) {
-      delete symbolMap[key];
-    }
-  });
+  // 算出対象が無い場合、処理終了
+  if (!Object.keys(symbolMap).length) {
+    return;
+  }
 
   // 「×」が一つでもあれば即 × を返す
   if (Object.values(symbolMap).includes(SYMBOLS.CROSS)) {
@@ -86,10 +93,30 @@ function getCategorySymbol(opData, evaluationItemData) {
   return determineCategory(actualScore, perfectScore);
 }
 
+/**
+ * 評価項目重複チェック
+ * 
+ * @param {*} opData 
+ * @returns 
+ */
+function checkDupEvaItems(opData) {
+
+  // ─── 評価項目重複チェック ───
+  // evaluationItem1, evaluationItem2… の値を取得
+  const evaluationItems = Object
+    .keys(opData)
+    .filter(key => key.startsWith('evaluationItem'))
+    .map(key => opData[key])
+    // '-'を除外
+    .filter(item => item !== SYMBOLS.HYPHEN);
+  // 重複があれば true、なければ false を返す
+  return new Set(evaluationItems).size !== evaluationItems.length;
+}
+
 // ─── 使用例 ───
 const opData = {
   evaluationItem1: '-', evaluation1: '×',
-  evaluationItem2: '判別', evaluation2: '-',
+  evaluationItem2: '判別性', evaluation2: '-',
   evaluationItem3: '可能性', evaluation3: 'a',
   evaluationItem4: '完全性', evaluation4: '△'
 };
