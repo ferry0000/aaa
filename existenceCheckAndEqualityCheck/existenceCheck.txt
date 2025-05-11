@@ -1,0 +1,86 @@
+jdbcで、DBテーブルにレコードが1件以上あるかを判定し、ある場合、レコードを取り出す方法を教えていただけますか？
+
+
+ChatGPT
+
+思考時間 10 秒
+JDBC で「テーブルにレコードが１件以上あるか」を判定し、存在する場合にレコードを取り出す代表的な２パターンをご紹介します。
+
+パターン①：SELECT COUNT() で存在判定 → 別クエリで取得
+存在判定
+
+java
+コピーする
+編集する
+String countSql = SELECT COUNT() FROM your_table;
+try (PreparedStatement ps = conn.prepareStatement(countSql);
+     ResultSet rs = ps.executeQuery()) {
+    if (rs.next() && rs.getInt(1)  0) {
+         レコードが１件以上ある
+    } else {
+         レコード無し
+    }
+}
+レコード取得
+
+java
+コピーする
+編集する
+String selectSql = SELECT id, name, created_at FROM your_table;
+try (PreparedStatement ps = conn.prepareStatement(selectSql);
+     ResultSet rs = ps.executeQuery()) {
+    while (rs.next()) {
+        int    id        = rs.getInt(id);
+        String name      = rs.getString(name);
+        Timestamp created = rs.getTimestamp(created_at);
+         ... 取得した値を処理
+    }
+}
+パターン②：１回の SELECT  で判定＋取得
+SELECT 実行 → rs.next() で判定
+
+java
+コピーする
+編集する
+String sql = SELECT id, name, created_at FROM your_table;
+try (Statement stmt = conn.createStatement();
+     ResultSet rs = stmt.executeQuery(sql)) {
+
+    if (!rs.next()) {
+         レコード無し
+        System.out.println(データが見つかりませんでした。);
+    } else {
+         １件目のレコード処理
+        do {
+            int    id        = rs.getInt(id);
+            String name      = rs.getString(name);
+            Timestamp created = rs.getTimestamp(created_at);
+             ... 取得した値を処理
+        } while (rs.next());   ２件目以降があれば繰り返し
+    }
+}
+ポイント解説
+rs.next() の返り値
+
+true → 次の行が存在し、カーソルがその行を指す
+
+false → 行が無く、カーソルは末尾の後ろ
+
+パフォーマンス
+
+COUNT() は全行をカウントするため大規模テーブルでは重い
+
+LIMIT 1（MySQL 等）を使うと最初の１行だけチェックできる
+
+sql
+コピーする
+編集する
+SELECT 1 FROM your_table LIMIT 1;
+try-with-resources を使うと rs／stmt／ps が自動クローズされ、リーク防止になる
+
+まとめ
+単に「存在判定」だけなら SELECT COUNT() や SELECT 1 … LIMIT 1
+
+存在判定と「レコードの中身」も一緒に取るなら、１回の SELECT  → rs.next() 判定 → do…while(rs.next()) のパターンがシンプル
+
+リソース管理は必ず try-with-resources で忘れずに！
