@@ -1,0 +1,48 @@
+// 事前：createSymbolArray とソート済みの arr を用意
+function createSymbolArray(opData) {
+  return Object
+    .keys(opData)
+    .filter(key => key.startsWith('evaluationItem'))
+    .map(itemKey => {
+      const idx      = itemKey.replace('evaluationItem', '');
+      return {
+        itemName: opData[itemKey],
+        symbol:   opData[`evaluation${idx}`]
+      };
+    });
+}
+
+const opData = {
+  evaluationItem1: '-',    evaluation1: '×',
+  evaluationItem2: '判別性', evaluation2: '-',
+  evaluationItem3: '可能性', evaluation3: 'a',
+  evaluationItem4: '完全性', evaluation4: '△'
+};
+
+// 1. 配列を作ってソート
+const arr = createSymbolArray(opData)
+  .sort((a, b) => a.itemName.localeCompare(b.itemName, 'ja'));
+
+// 2. opData を順番どおりに上書き
+arr.forEach(({ itemName, symbol }, index) => {
+  const idx = index + 1;
+  opData[`evaluationItem${idx}`] = itemName;
+  opData[`evaluation${idx}`]     = symbol;
+});
+
+console.log(opData);
+/*
+{
+  evaluationItem1: "-",    evaluation1: "×",
+  evaluationItem2: "可能性", evaluation2: "a",
+  evaluationItem3: "判別性", evaluation3: "-",
+  evaluationItem4: "完全性", evaluation4: "△"
+}
+*/
+ポイント
+
+arr.forEach の index を使い、先頭から 1,2,3… のキー名 (evaluationItem${idx}／evaluation${idx}) に順番どおり代入。
+
+元の opData を直接上書きするので、キーの追加や削除は不要です。
+
+他に保持すべきプロパティ（たとえば country など）がある場合は、この後で opData.country = 元の値; のようにコピーしてください。
