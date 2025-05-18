@@ -1,0 +1,23 @@
+DELETE
+FROM テーブル名
+WHERE id = '対象の値';
+解説
+DELETE FROM テーブル名
+削除対象のテーブル名を指定します。
+
+WHERE id = '対象の値'
+id カラムが '対象の値' と等しいレコードだけを削除します。
+
+数値型のカラムであればシングルクォートは省略可能です：WHERE id = 123
+
+文字列型のカラムであればシングルクォートで囲みます：WHERE id = 'ABC123'
+
+
+
+// JDBC の例
+String sql = "DELETE FROM テーブル名 WHERE id = ?";
+try (PreparedStatement ps = conn.prepareStatement(sql)) {
+    ps.setInt(1, targetId);
+    int cnt = ps.executeUpdate();
+    System.out.println(cnt + " 件削除しました");
+}
