@@ -7,9 +7,9 @@
  */
 function getLastDayTwoMonthsLaterJST(inputStr) {
   // 1. 入力 "YYYY/MM/DD hh:mm" を分割して数値化
-  const [datePart, timePart] = inputStr.split(' ');
-  const [year, month, day] = datePart.split('/').map(Number);
-  const [hour, minute] = timePart.split(':').map(Number);
+  const [datePart, timePart] = inputStr.split(" ");
+  const [year, month, day] = datePart.split("/").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
 
   // 2. 元の Date オブジェクトをローカルタイム（JST）で作成
   //    month - 1 で 0〜11 の monthIndex にする
@@ -19,7 +19,8 @@ function getLastDayTwoMonthsLaterJST(inputStr) {
   //    例えば、元の月Index が 0 (1月) なら、2ヶ月後は 2 (3月) → 末日は new Date(year, 3, 0) で取得。
   const origYear = originalDate.getFullYear();
   const origMonthIndex = originalDate.getMonth(); // 0〜11
-  const targetMonthIndex = origMonthIndex + 2;    // 2ヶ月後の monthIndex (0 based)
+  const targetMonthIndex = origMonthIndex + 2; // 2ヶ月後の monthIndex (0 based)
+  // 年またぎの考慮
   const targetYear = origYear + Math.floor(targetMonthIndex / 12);
   const targetMonthMod = targetMonthIndex % 12;
 
@@ -32,15 +33,15 @@ function getLastDayTwoMonthsLaterJST(inputStr) {
 
   // 5. ゼロ埋めして文字列を組み立て
   const Y = lastDayDate.getFullYear();
-  const M = String(lastDayDate.getMonth() + 1).padStart(2, '0'); // getMonth() は 0〜11
-  const D = String(lastDayDate.getDate()).padStart(2, '0');
-  const h = String(lastDayDate.getHours()).padStart(2, '0');
-  const m = String(lastDayDate.getMinutes()).padStart(2, '0');
+  const M = String(lastDayDate.getMonth() + 1).padStart(2, "0"); // getMonth() は 0〜11
+  const D = String(lastDayDate.getDate()).padStart(2, "0");
+  const h = String(lastDayDate.getHours()).padStart(2, "0");
+  const m = String(lastDayDate.getMinutes()).padStart(2, "0");
 
   return `${Y}/${M}/${D} ${h}:${m}`;
 }
 
 // --- 動作確認例 ---
-console.log(getLastDayTwoMonthsLaterJST("2025/01/15 08:30")); 
+console.log(getLastDayTwoMonthsLaterJST("2025/01/15 08:30"));
 // 期待出力例: "2025/03/31 23:59"（1月15日の2ヶ月後は3月末）
 // JST 前提なので、Date の挙動は日本標準時として扱われます

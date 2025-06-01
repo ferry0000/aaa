@@ -1,0 +1,31 @@
+補足説明
+月をまたぐ計算について
+JavaScript の Date オブジェクトで日付を扱う際、日付部分に 0 を渡すと「前月の末日」が返ってきます。
+つまり、ある月の末日を取りたいときは、
+
+js
+コピーする
+編集する
+// 例: 2025年3月の末日を知りたい → new Date(2025, 3, 0)
+const marchLast = new Date(2025, 3, 0); // 2025-03-31 00:00:00
+という具合に「(取得したい月Index + 1, 日 = 0)」を指定します。
+
+タイムゾーンの扱い
+
+JST の場合は new Date(年, 月Index, 日, 時, 分) を使えば、自動的にローカル時刻（お使いの環境が日本なら JST）になります。
+
+UTC の場合は new Date(Date.UTC(年, 月Index, 日, 時, 分)) と書くと、UTC として解釈された Date オブジェクトが生成されます。
+
+最終的に出力文字列化するときは、JST なら getFullYear(), getMonth()+1, getDate(), getHours(), getMinutes() を使い、
+UTC なら getUTCFullYear(), getUTCMonth()+1, getUTCDate(), getUTCHours(), getUTCMinutes() を使ってください。
+
+フォーマット (ゼロ埋め)
+月・日・時・分を常に 2 桁表示にしたい場合は、String(...).padStart(2, '0') を使えば簡単に "01" や "09" のように整形できます。
+
+以上のコード例を利用すれば、
+
+JST 前提：getLastDayTwoMonthsLaterJST("YYYY/MM/DD hh:mm")
+
+UTC 前提：getLastDayTwoMonthsLaterUTC("YYYY/MM/DD hh:mm")
+
+のそれぞれで、2ヶ月後の末日 23:59 を "YYYY/MM/DD hh:mm" の形式で取得できます。
