@@ -1,0 +1,36 @@
+htmlのテキストボックスの選択を解除するJavaScriptコードを教えてください。
+
+
+ChatGPT:
+もちろんです！
+HTMLのテキストボックス（<input>や<textarea>）で現在選択されているテキストを解除（つまり、選択状態を外す）するJavaScriptコードは、次のように書けます。
+
+基本的な例
+html
+コピーする
+編集する
+<input type="text" id="myInput" value="テキストが選択されています">
+<button onclick="deselectText()">選択解除</button>
+
+<script>
+function deselectText() {
+  const input = document.getElementById('myInput');
+  input.setSelectionRange(0, 0); // 選択範囲を0から0にする（選択解除）
+  input.blur(); // フォーカスも外す場合
+}
+</script>
+ポイント
+✅ setSelectionRange(start, end) を使って選択範囲を0から0にすると、選択が解除されます。
+✅ blur() を呼び出すとフォーカスも外れるので、完全に選択解除されます。
+
+もしフォーカスは残したい場合
+javascript
+コピーする
+編集する
+function deselectText() {
+  const input = document.getElementById('myInput');
+  input.setSelectionRange(0, 0); // 選択範囲を解除
+}
+これでフォーカスはそのままですが、テキスト選択が解除されます。
+
+もし複数のテキストボックスで解除したい場合は、同じようにIDやクラスを使ってループで処理することもできます。必要ならそのコードも書きますので教えてくださいね！
