@@ -1,0 +1,28 @@
+ポイント解説
+UTC 前提のパースと出力
+
+入力文字列を分割して得た年・月・日を、Date.UTC(year, monthIndex, day, hour, minute) に渡すと「UTC」での Date オブジェクトが作れます。
+
+ただしここでは時刻部分を結果に使わないため、年・月・日だけを扱っています。
+
+月インデックスの調整
+
+rawTargetMonthIndex = origMonthIndexUTC - 2 として「2ヶ月前の月」を暫定的に求める。
+
+もし rawTargetMonthIndex が負になるときは Math.floor(rawTargetMonthIndex / 12) で年を繰り下げる（例：2025年1月→origMonthIndexUTC=0 の場合 0 - 2 = -2 → Math.floor(-2/12) = -1 → 年が１つ減る）。
+
+日付が存在しないケースの調整
+
+例：2025/03/31 の 2ヶ月前は 2025年1月31日 ですが、1月に 31日が存在しなければ自動で末日を設定したいので、
+new Date(Date.UTC(targetYear, targetMonthMod + 1, 0)).getUTCDate() で「その月の末日の日にち」を取得し、
+Math.min(origDay, daysInTargetMonth) して日付を合わせています。
+
+時刻を常に 00:00 に固定
+
+new Date(Date.UTC(targetYear, targetMonthMod, targetDay, 0, 0, 0)) によって UTC の午前 0 時が得られます。
+
+ゼロ埋めフォーマット
+
+出力の際は getUTCMonth() や getUTCHours() などを使い、String(...).padStart(2, '0') で必ず 2 桁表示に整形します。
+
+この関数を使えば、入力を UTC 前提で解釈して「2ヶ月前の 00:00（UTC）」を "YYYY/MM/DD hh:mm" 形式で得ることができます。

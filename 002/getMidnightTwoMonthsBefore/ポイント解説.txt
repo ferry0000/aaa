@@ -1,0 +1,29 @@
+ポイント解説
+月インデックスの調整 (rawTargetMonthIndex, yearOffset, targetMonthMod)
+
+rawTargetMonthIndex = origMonthIndex - 2 で「元の月Index から 2 を引く」
+
+もし rawTargetMonthIndex が負（たとえば元の月が 1月→origMonthIndex=0 の場合は -2）になるとき、
+Math.floor(rawTargetMonthIndex / 12) によって年を「繰り下げる」必要があるかどうかを計算します。
+
+% 12 だけでは負の値になってしまう場合があるので、((raw % 12) + 12) % 12 の形で 0～11 の範囲に補正します。
+
+日数が足りない月への対応
+
+たとえば「５月３１日」の２ヶ月前は「３月３１日」で問題ありませんが、
+「３月３１日」の２ヶ月前は「１月３１日」で問題なし。
+しかし「３月３１日」の 1 ヶ月前 (2月31日) のように、そもそも存在しない日付にならないように、
+new Date(targetYear, targetMonthMod + 1, 0)（翌月の 0 日 = 該当月の末日） でその月の日数を取得し、
+Math.min(origDay, daysInTargetMonth) を使って日を合わせています。
+
+時刻を常に 00:00 に固定
+
+new Date(targetYear, targetMonthMod, targetDay, 0, 0, 0, 0) によって 00:00 が自動設定されます。
+
+フォーマット時も getHours()→"00", getMinutes()→"00" になるため、「00:00」表示になります。
+
+ゼロ埋めフォーマット
+
+String(...).padStart(2, '0') で、必ず 2 桁の文字列（例："03" や "09"）になるように整形しています。
+
+このようにしておけば、どんな "YYYY/MM/DD hh:mm" が入力されても、JST として解釈し、正しく２ヶ月前の午前0時（00:00）を "YYYY/MM/DD hh:mm" の形式で得ることができます。
