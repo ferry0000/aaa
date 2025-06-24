@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>縦結合 + テキストエリア絶対配置</title>
+<style>
+  /*―― テーブル基本 ――*/
+  table           { border-collapse: collapse; border-spacing: 0; width: 100%; }
+  th, td          { border: 1px solid #666; padding: 0; }
+
+  /*―― “セルをアンカー” に、テキストエリアをオーバーレイする ――*/
+  td              { position: relative; height: 200px; /* これが基準コンテナになるので、大きさを指定、もしくはすでにある必要 */ }
+  td textarea {
+    position: absolute; inset: 0;        /* top/right/bottom/left 全て 0 */
+    margin: 0; padding: 0; border: none;
+    width: 100%; height: 100%;           /* inset:0 があるので width/height は任意 */
+    box-sizing: border-box;
+    resize: none;
+    font: inherit;
+  }
+</style>
+</head>
+<body>
+
+<button id="mergeBtn">セルを結合</button>
+
+<table id="myTable">
+  <thead>
+    <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A02</textarea></td>
+      <td><textarea>L</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+/**
+ * 指定テーブルの指定列について、隣接セルの <textarea> 値が同じなら縦結合
+ * 高さは絶対配置で自然にフィットするため、計算不要
+ * @param {HTMLTableElement} table
+ * @param {number[]} colIdxArray  0 始まり列番号
+ */
+function mergeColumns(table, colIdxArray) {
+  colIdxArray.forEach(colIdx => {
+    let anchorCell = null;
+    let spanCount  = 1;
+
+    // tbody 行を上から走査
+    Array.from(table.tBodies[0].rows).forEach(row => {
+      const cell = row.cells[colIdx];
+      if (!cell) return;
+
+      const ta      = cell.querySelector('textarea');
+      const current = ta ? ta.value.trim() : cell.textContent.trim();
+
+      if (!anchorCell) {                // 1 行目扱い
+        anchorCell = cell;
+        return;
+      }
+
+      const anchorTA = anchorCell.querySelector('textarea');
+      const anchor   = anchorTA ? anchorTA.value.trim() : anchorCell.textContent.trim();
+
+      if (current === anchor) {
+        // 結合対象：rowSpan を伸ばし、現在セルは非表示
+        spanCount++;
+        anchorCell.rowSpan = spanCount;
+        cell.style.display = 'none';
+        if (ta) ta.remove();            // テキストエリア重複を防止
+      } else {
+        // 結合終了、次を新しいアンカーに
+        anchorCell = cell;
+        spanCount  = 1;
+      }
+    });
+  });
+}
+
+// ボタン押下で結合
+document.getElementById('mergeBtn').addEventListener('click', () => {
+  const table = document.getElementById('myTable');
+  mergeColumns(table, [0, 1]);          // 商品列(0)とコード列(1)を結合
+});
+</script>
+
+</body>
+</html>
