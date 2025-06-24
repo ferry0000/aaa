@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>同値セルの縦結合デモ</title>
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td, th {
+    border: 1px solid #666;
+    padding: 0;               /* テキストエリアと段差を作らない */
+  }
+  textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 50px;         /* 小さすぎるとつまみづらいので保険 */
+    box-sizing: border-box;   /* padding / border を含め幅高さ100%扱い */
+    resize: none;             /* ユーザーの手動リサイズを禁止したい場合だけ */
+    border: none;             /* 好みで */
+    font: inherit;            /* テーブルと同じフォントを使う */
+  }
+</style>
+</head>
+<body>
+
+<button id="mergeBtn">セルを結合</button>
+
+<table id="myTable">
+  <thead>
+    <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A02</textarea></td>
+      <td><textarea>L</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+/**
+ * 指定テーブルの指定列について、隣接セルの <textarea> 値が同じなら結合する
+ * @param {HTMLTableElement} table   結合対象テーブル
+ * @param {number[]} colIdxArray     0始まり列番号の配列（例: [0,1]）
+ */
+function mergeColumns(table, colIdxArray) {
+  colIdxArray.forEach(colIdx => {
+    let anchorCell = null;   // 現在結合中の最上セル
+    let spanCount  = 1;      // 現在の rowspan 数
+
+    // THEAD を飛ばし、TBODY の各行を上から順に処理
+    Array.from(table.tBodies[0].rows).forEach(row => {
+      const cell = row.cells[colIdx];
+      if (!cell) return; // 規格外行は無視
+
+      const ta      = cell.querySelector('textarea');
+      const current = ta ? ta.value.trim() : cell.textContent.trim();
+
+      if (!anchorCell) {             // 1行目
+        anchorCell = cell;
+        return;
+      }
+
+      // 比較対象は anchorCell の textarea
+      const anchorTA = anchorCell.querySelector('textarea');
+      const anchor   = anchorTA ? anchorTA.value.trim() : anchorCell.textContent.trim();
+
+      if (current === anchor) {
+        // 同じデータ → anchorCell に rowspan を追加し、今のセルは隠す
+        spanCount++;
+        anchorCell.rowSpan = spanCount;
+        cell.style.display = 'none'; // 見た目も form 送信も除外
+        if (ta) ta.remove();         // textarea 重複を防ぐ
+      } else {
+        // 異なるデータ → anchor をリセット
+        anchorCell = cell;
+        spanCount  = 1;
+      }
+    });
+
+    // 結合が完了した後、anchorCell 内の <textarea> の高さを合わせる
+    // 100% 指定でも OK だが、ブラウザ差異を避けたい場合は固定値で伸ばす
+    Array.from(table.tBodies[0].rows).forEach(row => {
+      const cell = row.cells[colIdx];
+      if (!cell || cell.style.display === 'none') return;
+      const ta = cell.querySelector('textarea');
+      if (ta) {
+        ta.style.height = cell.offsetHeight + 'px';
+      }
+    });
+  });
+}
+
+// ボタンで試せるように
+document.getElementById('mergeBtn').addEventListener('click', () => {
+  const table = document.getElementById('myTable');
+  mergeColumns(table, [0, 1]); // 商品列(0列目)とコード列(1列目)を結合
+});
+</script>
+
+</body>
+</html>
