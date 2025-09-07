@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>フォーカス即解除</title>
+  </head>
+  <body>
+    <h3>テキストボックスにフォーカスすると、すぐに外れます</h3>
+
+    <input type="text" id="myInput" placeholder="ここは入力できません" />
+
+    <script>
+      const textbox = document.querySelector("#myInput");
+
+      textbox.addEventListener("focus", () => {
+        // フォーカスされたら即座に外す
+        textbox.blur();
+      });
+    </script>
+  </body>
+</html>

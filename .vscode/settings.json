@@ -1,0 +1,16 @@
+{
+  // 保存時に自動修正はしない
+  "editor.codeActionsOnSave": {},
+
+  // ESLint を有効にするファイルタイプ
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "html"
+  ],
+
+  // 入力中に即チェックして赤線を表示
+  "eslint.run": "onType"
+}
