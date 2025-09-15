@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>デモ</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column; /* 縦方向に並べる */
+        align-items: flex-end; /* 右端に揃える */
+        width: 100%; /* コンテナを画面幅いっぱいにする */
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+
+      td,
+      th {
+        border: 1px solid #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <button id="Btn">aaaa</button>
+
+      <table id="myTable">
+        <thead>
+          <tr>
+            <th>商品</th>
+            <th>コード</th>
+            <th>サイズ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A01</textarea></td>
+            <td><textarea>S</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A01</textarea></td>
+            <td><textarea>M</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A02</textarea></td>
+            <td><textarea>L</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Banana</textarea></td>
+            <td><textarea>B01</textarea></td>
+            <td><textarea>S</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Banana</textarea></td>
+            <td><textarea>B01</textarea></td>
+            <td><textarea>M</textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

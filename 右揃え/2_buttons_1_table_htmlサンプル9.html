@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>デモ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      /* テーブルを横スクロール可能にするラッパ */
+      .scroll-area {
+        overflow-x: auto;
+        width: 100%;
+        /* 任意: 画面に余白がある場合の見た目調整 */
+        padding-bottom: 8px;
+      }
+
+      /* ボタン行（テーブルの直前に縦並びで配置） */
+      .btn-row {
+        display: flex;
+        align-items: center;
+        height: 40px; /* ボタン行の高さを確保（お好みで） */
+        margin-bottom: 6px; /* テーブルとの間隔 */
+      }
+
+      /* ボタン自体。stickyで“見えている右端”に張り付く */
+      #Btn {
+        margin-left: auto; /* 行の右側へ */
+        position: sticky;
+        right: var(
+          --snapRight,
+          0px
+        ); /* 狭い時はテーブル右端に揃えるための補正 */
+        z-index: 1; /* 念のため前面 */
+      }
+
+      table {
+        border-collapse: collapse;
+        /* 内容幅に応じて広がる。狭ければ狭いまま、広ければラッパで横スクロール */
+        width: max-content;
+      }
+
+      td,
+      th {
+        border: 1px solid #666;
+        padding: 4px 8px;
+        white-space: nowrap; /* デモ用：折り返さず横幅が出やすいように */
+      }
+
+      textarea {
+        width: 100%;
+        height: 2em;
+        /* resize: none; */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 横スクロール領域。ボタンとテーブルをこの中に縦並びで入れる -->
+    <div class="scroll-area" id="scrollArea">
+      <div class="btn-row">
+        <button id="Btn">aaaa</button>
+      </div>
+
+      <table id="myTable">
+        <thead>
+          <tr>
+            <th>商品</th>
+            <th>コード</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+            <th>サイズ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A01</textarea></td>
+            <td><textarea>S</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A01</textarea></td>
+            <td><textarea>M</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Apple</textarea></td>
+            <td><textarea>A02</textarea></td>
+            <td><textarea>L</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Banana</textarea></td>
+            <td><textarea>B01</textarea></td>
+            <td><textarea>S</textarea></td>
+          </tr>
+          <tr>
+            <td><textarea>Banana</textarea></td>
+            <td><textarea>B01</textarea></td>
+            <td><textarea>M</textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      (function () {
+        const scrollArea = document.getElementById("scrollArea");
+        const table = document.getElementById("myTable");
+
+        // テーブルが画面より狭いときは「右の余白量」をCSS変数に入れてボタンを左へ寄せる
+        function updateSnapRight() {
+          // 余白 = コンテナの可視幅 - テーブル実幅（負なら0に丸め）
+          const extraRight = Math.max(
+            0,
+            scrollArea.clientWidth - table.scrollWidth
+          );
+          scrollArea.style.setProperty("--snapRight", extraRight + "px");
+        }
+
+        // 初期・リサイズ・テーブル幅変化で更新
+        updateSnapRight();
+        window.addEventListener("resize", updateSnapRight);
+
+        // テーブルの内容が変わって幅が変化する場合に備える
+        if ("ResizeObserver" in window) {
+          new ResizeObserver(updateSnapRight).observe(table);
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>デモ</title>
+<style>
+  .container {
+    position: relative;
+  }
+
+  #Btn {
+    position: absolute;
+    top: 0;
+    /* left/right はJSで切り替え */
+  }
+
+  table {
+    border-collapse: collapse;
+
+  }
+
+  td, th {
+    border: 1px solid #666;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <button id="Btn">aaaa</button>
+
+  <table id="myTable">
+    <thead>
+      <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A01</textarea></td>
+        <td><textarea>S</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A01</textarea></td>
+        <td><textarea>M</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A02</textarea></td>
+        <td><textarea>L</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Banana</textarea></td>
+        <td><textarea>B01</textarea></td>
+        <td><textarea>S</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Banana</textarea></td>
+        <td><textarea>B01</textarea></td>
+        <td><textarea>M</textarea></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function adjustButtonPosition() {
+  const btn = document.getElementById('Btn');
+  const table = document.getElementById('myTable');
+  const container = table.parentElement;
+
+  const tableRect = table.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+
+  if (tableRect.right <= window.innerWidth) {
+    // テーブルが画面内に収まっている → テーブル右端に配置
+    btn.style.right = (containerRect.right - tableRect.right) + 'px';
+  } else {
+    // テーブルが画面外にはみ出している → 画面右端に配置
+    btn.style.right = '0';
+  }
+}
+
+// 初期表示とリサイズ時に調整
+window.addEventListener('load', adjustButtonPosition);
+window.addEventListener('resize', adjustButtonPosition);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>デモ</title>
+    <style>
+      /* * { box-sizing: border-box; } */
+
+      /* ボタンの行（テーブルの外・上にある） */
+      .btn-row {
+        position: relative;   /* 子の absolute の基準 */
+        height: 40px;         /* 高さはお好みで */
+        margin-bottom: 6px;   /* テーブルとの間隔 */
+      }
+      /* 既定は画面（=ページ幅）右端にぴったり */
+      #Btn {
+        position: absolute;
+        right: var(--snapRight, 0px); /* テーブルが狭い時だけ余白分だけ左へ寄せる */
+      }
+
+      /* テーブルは横スクロール可能に */
+      .scroll-area {
+        overflow-x: auto; /* ←これはフレームワークで自動適用されているかも？ */
+        /* width: 100%; */
+      }
+
+      table { border-collapse: collapse; width: max-content; }
+      td, th { border: 1px solid #666; padding: 4px 8px; white-space: nowrap; }
+
+      textarea { width: 100%; height: 2em;  }
+    </style>
+  </head>
+  <body>
+    <!-- ← 横スクロール領域の“外”にボタンを配置 -->
+    <div class="btn-row">
+      <button id="Btn">aaaa</button>
+    </div>
+
+    <div class="scroll-area" id="scrollArea">
+      <table id="myTable">
+        <thead>
+          <tr><th>商品</th><th>コード</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th><th>サイズ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><textarea>Apple</textarea></td><td><textarea>A01</textarea></td><td><textarea>S</textarea></td></tr>
+          <tr><td><textarea>Apple</textarea></td><td><textarea>A01</textarea></td><td><textarea>M</textarea></td></tr>
+          <tr><td><textarea>Apple</textarea></td><td><textarea>A02</textarea></td><td><textarea>L</textarea></td></tr>
+          <tr><td><textarea>Banana</textarea></td><td><textarea>B01</textarea></td><td><textarea>S</textarea></td></tr>
+          <tr><td><textarea>Banana</textarea></td><td><textarea>B01</textarea></td><td><textarea>M</textarea></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      (function () {
+        const scrollArea = document.querySelector('#scrollArea');
+        const table = document.querySelector('#myTable');
+        const button = document.querySelector('#Btn');
+
+  function updateSnapRight() {
+    // 余白 = 可視幅 - テーブル実幅（負のとき0に丸め）
+    const extraRight = Math.max(0, scrollArea.clientWidth - table.scrollWidth);
+    button.style.setProperty('--snapRight', extraRight + 'px');
+        }
+
+        // 初期、リサイズ、テーブル幅変化に対応
+        updateSnapRight();
+        window.addEventListener('resize', updateSnapRight);
+        // if ('ResizeObserver' in window) {
+        //   new ResizeObserver(updateSnapRight).observe(table);
+        // }
+      })();
+    </script>
+  </body>
+</html>

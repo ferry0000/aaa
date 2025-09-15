@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>デモ</title>
+<style>
+  .container {
+    width: 100%; /* 画面幅基準 */
+  }
+
+  .btn-wrap {
+    position: relative;
+    height: 2em; /* ボタン行の高さ確保 */
+  }
+
+  #Btn {
+    position: absolute;
+    right: 0; /* デフォルトは画面右端 */
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  td, th {
+    border: 1px solid #666;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="btn-wrap">
+    <button id="Btn">aaaa</button>
+  </div>
+
+  <table id="myTable">
+    <thead>
+      <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A01</textarea></td>
+        <td><textarea>S</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A01</textarea></td>
+        <td><textarea>M</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Apple</textarea></td>
+        <td><textarea>A02</textarea></td>
+        <td><textarea>L</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Banana</textarea></td>
+        <td><textarea>B01</textarea></td>
+        <td><textarea>S</textarea></td>
+      </tr>
+      <tr>
+        <td><textarea>Banana</textarea></td>
+        <td><textarea>B01</textarea></td>
+        <td><textarea>M</textarea></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function adjustButtonPosition() {
+  const btn = document.getElementById('Btn');
+  const table = document.getElementById('myTable');
+
+  const tableRect = table.getBoundingClientRect();
+
+  if (tableRect.right <= window.innerWidth) {
+    // テーブルが画面内に収まっている → テーブル右端に配置
+    const diff = window.innerWidth - tableRect.right;
+    btn.style.right = diff + 'px';
+  } else {
+    // テーブルが画面外にはみ出している → 画面右端に配置
+    btn.style.right = '0';
+  }
+}
+
+// 初期表示とリサイズ時に調整
+window.addEventListener('load', adjustButtonPosition);
+window.addEventListener('resize', adjustButtonPosition);
+</script>
+
+</body>
+</html>

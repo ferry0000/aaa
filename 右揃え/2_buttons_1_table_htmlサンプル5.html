@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>CSSだけで右端同期（Btnをdivでラップ）</title>
+<style>
+  :root { --btn-gap: 8px; }
+
+  /* テーブルを“アンカー”にする */
+  #myTable {
+    anchor-name: --tbl;
+    border-collapse: collapse;
+    inline-size: max-content; /* 内容に応じて横に広がる例 */
+  }
+  td, th { border: 1px solid #666; padding: 4px 8px; }
+
+  /* Btnをラップするdiv。これをテーブル右端に追従させる */
+  #BtnWrap {
+    position: fixed; /* ビューポート基準 */
+    /* テーブル上端に合わせ、少し上に浮かせて“外”に配置 */
+    /* top: anchor(--tbl top);
+    transform: translateY(calc(-100% - var(--btn-gap)));
+    z-index: 10; */
+
+
+  }
+
+  /* 実際のボタンはラップの中にそのまま配置 */
+  #Btn { /* 必要なら見た目調整だけ */
+    /* 例: padding などお好みで */
+        /* 通常はテーブルの右端に合わせる。
+       もしテーブルが画面外に広がる（アンカー右端 > 100vw）なら 0 に丸めて画面右端へ。 */
+    right: max(0px, calc(100vw - anchor(--tbl right)));
+  }
+</style>
+</head>
+<body>
+
+<!-- Btn を div でラップ -->
+<div id="BtnWrap">
+  <button id="Btn">aaaa</button>
+</div>
+
+<table id="myTable">
+  <thead>
+    <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Apple</textarea></td>
+      <td><textarea>A02</textarea></td>
+      <td><textarea>L</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>S</textarea></td>
+    </tr>
+    <tr>
+      <td><textarea>Banana</textarea></td>
+      <td><textarea>B01</textarea></td>
+      <td><textarea>M</textarea></td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<title>デモ（CSSのみ・横スクロール追随）</title>
+<style>
+  /* 横スクロールする領域（画面幅で切れて横スクロール出す） */
+  .scroller {
+    width: 100%;
+    overflow-x: auto;     /* ここが横スクロールの親 */
+  }
+
+  /* コンテンツ幅はテーブル幅に合わせる */
+  .inner {
+    width: max-content;   /* テーブルの実幅に合わせて広がる */
+  }
+
+  /* ボタン行：通常は右端寄せ、スクロール時は画面右端にsticky */
+  .bar {
+    position: sticky;     /* 横方向のsticky */
+    right: 0;             /* スクロール領域の右端に張り付く */
+    display: flex;
+    justify-content: flex-end; /* 通常時はテーブルの右端に寄る */
+    padding: .25rem 0;
+    z-index: 1;           /* 表より前に（任意） */
+    background: transparent; /* 必要なら背景色を付けてください */
+  }
+
+  table { border-collapse: collapse; }
+  td, th { border: 1px solid #666; }
+</style>
+</head>
+<body>
+
+<div class="scroller">
+  <div class="inner">
+    <div class="bar">
+      <button id="Btn">aaaa</button>
+    </div>
+
+    <table id="myTable">
+      <thead>
+        <tr><th>商品</th><th>コード</th><th>サイズ</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><textarea>Apple</textarea></td>
+          <td><textarea>A01</textarea></td>
+          <td><textarea>S</textarea></td>
+        </tr>
+        <tr>
+          <td><textarea>Apple</textarea></td>
+          <td><textarea>A01</textarea></td>
+          <td><textarea>M</textarea></td>
+        </tr>
+        <tr>
+          <td><textarea>Apple</textarea></td>
+          <td><textarea>A02</textarea></td>
+          <td><textarea>L</textarea></td>
+        </tr>
+        <tr>
+          <td><textarea>Banana</textarea></td>
+          <td><textarea>B01</textarea></td>
+          <td><textarea>S</textarea></td>
+        </tr>
+        <tr>
+          <td><textarea>Banana</textarea></td>
+          <td><textarea>B01</textarea></td>
+          <td><textarea>M</textarea></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
