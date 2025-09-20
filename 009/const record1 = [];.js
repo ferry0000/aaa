@@ -14,9 +14,10 @@ for (let i = 1; i <= 5; i++) {
 }
 console.log(allEmpty); // false
 
-
-
-const records = Array.from({ length: 100 }, (_, i) => globalThis[`record${i+1}`]);
+const records = Array.from(
+  { length: 100 },
+  (_, i) => globalThis[`record${i + 1}`]
+);
 //   .filter(Array.isArray); // 未定義や配列以外を除外
 
-const allEmpty = records.every(a => a.length === 0);
+const allEmpty = records.every((a) => a.length === 0);
